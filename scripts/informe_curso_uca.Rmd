@@ -1,0 +1,67 @@
+---
+title: "Ejercicio práctico Rmarkdown"
+author:
+    - names: "María Hurtado de Mendoza"
+date: "`r Sys.Date()`" 
+output: 
+    distill::distill_article:
+        highlight: kate
+        code_folding: false  
+        toc: true     
+        toc_depth: 3
+        css: styles.css         
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
+# Cargar los paquetes necesarios
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+# Cargar los datos
+data <- read.csv("./data/top10s.csv")
+
+```
+
+# Informe hits de Spotify 2010-2019
+
+## Datos
+
+Top Spotify Songs 2010-2019
+
+<https://www.kaggle.com/datasets/leonardopena/top-spotify-songs-from-20102019-by-year/>
+
+## Artistas con más éxitos
+
+```{r top_genre}
+
+top_genre_data <- data %>% dplyr::count(top.genre) %>% arrange(desc(n)) %>% head()
+
+print(top_genre_data)
+
+ggplot(top_genre_data, aes(x = top.genre, y = n)) + 
+  geom_bar(stat = "identity", fill = "blue") +   labs(title = "Top 6 Géneros", x = "Género", y = "Frecuencia")
+
+```
+
+## Estilos con más éxitos
+
+```{r BPMs}
+
+data %>% dplyr::count(bpm) %>% arrange(desc(n)) %>% head()
+
+```
+
+## Tendencia de la duración de los hits
+
+```{r duration_trend, fig.width=8, fig.height=6}
+
+plot(dur ~ year, data = data)
+abline(lm(dur ~ year, data = data))
+
+```
